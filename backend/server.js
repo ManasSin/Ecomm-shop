@@ -1,10 +1,17 @@
 import express from "express";
 import products from "./products.js";
+import dotenv from "dotenv";
+dotenv.config();
 
+const port = process.env.PORT || 3000;
 const app = express();
 
 // Middleware to handle invalid routes
 app.use(express.json());
+
+app.get("/", (req, res) => {
+  res.send("Server is running");
+});
 
 // Get all products
 app.get("/api/products", (req, res) => {
@@ -13,7 +20,8 @@ app.get("/api/products", (req, res) => {
 
 // Get a single product by ID
 app.get("/api/products/:id", (req, res) => {
-  const product = products.find((p) => p._id === parseInt(req.params.id));
+  const product = products.find((p) => p._id === req.params.id);
+  // console.log(product);
   if (!product) {
     const error = new Error("Product not found");
     error.status = 404;
@@ -58,6 +66,5 @@ app.delete("/api/products/:id", (req, res) => {
   res.json(product);
 });
 
-// Start the server
-const port = process.env.PORT || 3000;
+// listen for requests
 app.listen(port, () => console.log(`Listening on port ${port}...`));
