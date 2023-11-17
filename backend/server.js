@@ -3,6 +3,7 @@ import products from "./data/products.js";
 import dotenv from "dotenv";
 import connectDb from "./config/db.js";
 import cors from "cors";
+import { notFound, errorHandler } from "./middleware/errorHandler.js";
 
 import productRoutes from "./routes/productRoutes.js";
 
@@ -62,6 +63,9 @@ app.delete("/api/products/:id", (req, res) => {
   products.splice(index, 1);
   res.json(product);
 });
+
+app.use(notFound);
+app.use(errorHandler);
 
 // listen for requests
 app.listen(port, () => console.log(`Listening on port ${port}...`));
