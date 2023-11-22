@@ -6,11 +6,12 @@ import cors from "cors";
 import { notFound, errorHandler } from "./middleware/errorHandler.js";
 
 import productRoutes from "./routes/productRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 dotenv.config();
 connectDb(); // connect to database
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 const app = express();
 
 app.use(
@@ -27,43 +28,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/products", productRoutes);
-
-// Create a new product
-app.post("/api/products", (req, res) => {
-  const product = {
-    id: products.length + 1,
-    ...req.body,
-  };
-  products.push(product);
-  res.json(product);
-});
-
-// Update an existing product
-app.put("/api/products/:id", (req, res) => {
-  const product = products.find((p) => p._id === parseInt(req.params.id));
-  if (!product) {
-    const error = new Error("Product not found");
-    error.status = 404;
-    throw error;
-  }
-  product.name = req.body.name;
-  product.price = req.body.price;
-  res.json(product);
-});
-
-// Delete a product
-app.delete("/api/products/:id", (req, res) => {
-  const product = products.find((p) => p._id === parseInt(req.params.id));
-  if (!product) {
-    const error = new Error("Product not found");
-    error.status = 404;
-    throw error;
-  }
-  const index = products.indexOf(product);
-  products.splice(index, 1);
-  res.json(product);
-});
-
+app.use("/api/users", userRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
