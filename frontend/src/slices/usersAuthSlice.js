@@ -1,11 +1,11 @@
 import { USERS_URL } from "../constants";
-import { authSlice } from "../slices/authSlice";
+import { apiSlice } from "./apiSlices";
 
-export const usersApiSlice = authSlice.injectEndpoints({
+export const usersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (data) => ({
-        url: USERS_URL / login,
+        url: `${USERS_URL}/login`,
         method: "POST",
         body: data,
       }),
