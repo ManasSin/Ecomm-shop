@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,11 +23,11 @@ const LoginScreen = () => {
   const sp = new URLSearchParams(search);
   const redirect = sp.get("redirect") || "/";
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (userInfo) {
-      navigate(redirect);
+      navigate(-1); // redirect to previous page
     }
-  }, [userInfo, redirect, navigate]);
+  }, []);
 
   const SubmitHandler = async (e) => {
     e.preventDefault();

@@ -29,7 +29,8 @@ const CartScreen = () => {
   };
 
   const checkoutHandler = () => {
-    naviagte("/login?redirect=/shipping");
+    const navigatePath = userInfo ? "/shipping" : "/login?redirect=/shipping";
+    naviagte(navigatePath);
   };
 
   return (
