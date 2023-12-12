@@ -31,6 +31,24 @@ const RegisterScreen = () => {
     }
   }, [userInfo, redirect, navigate]);
 
+  const [fromChange, setFromChange] = useState(false);
+
+  useEffect(() => {
+    if (!fromChange) return;
+
+    const handlereload = (e) => {
+      e.preventDefault();
+      console.log("unloaded");
+      return (e.returnValue = "");
+    };
+    window.addEventListener("beforeunload", handlereload, { capture: true });
+    return () => {
+      window.removeEventListener("beforeunload", handlereload, {
+        capture: true,
+      });
+    };
+  }, [fromChange]);
+
   const SubmitHandler = async (e) => {
     e.preventDefault();
 
@@ -46,11 +64,16 @@ const RegisterScreen = () => {
       }
     }
   };
+
+  const handleFormChange = () => {
+    setFromChange(true);
+  };
+
   return (
     <FormContainer>
       <h1>Register your self</h1>
 
-      <Form onSubmit={SubmitHandler}>
+      <Form onSubmit={SubmitHandler} onChange={handleFormChange}>
         <Form.Group controlId="name" className="my-3">
           <Form.Label>Enter your name</Form.Label>
           <Form.Control
@@ -110,7 +133,7 @@ const RegisterScreen = () => {
       <Row className="py-3">
         <Col>
           Already a Customer?{" "}
-          <Link to={redirect ? `/register?redirect=${redirect}` : `/register`}>
+          <Link to={redirect ? `/login?redirect=${redirect}` : `/login`}>
             Login
           </Link>
         </Col>

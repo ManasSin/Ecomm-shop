@@ -29,6 +29,19 @@ const LoginScreen = () => {
     }
   }, [userInfo, redirect, navigate]);
 
+  useEffect(() => {
+    const handlereload = (e) => {
+      e.preventDefault();
+      return (e.returnValue = "");
+    };
+    window.addEventListener("beforeunload", handlereload, { capture: true });
+    return () => {
+      window.removeEventListener("beforeunload", handlereload, {
+        capture: true,
+      });
+    };
+  }, []);
+
   const SubmitHandler = async (e) => {
     e.preventDefault();
     try {
