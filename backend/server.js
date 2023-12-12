@@ -8,6 +8,7 @@ import { notFound, errorHandler } from "./middleware/errorHandler.js";
 
 import productRoutes from "./routes/productRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
 
 dotenv.config();
 connectDb(); // connect to database
@@ -24,6 +25,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
+    credentials: true,
     origin: "http://localhost:3000",
   })
 ); // Enable CORS
@@ -37,6 +39,13 @@ app.get("/", (req, res) => {
 
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/orders", orderRoutes);
+
+// setting up paypal
+app.get("/api/config/paypal", (req, res) =>
+  res.send({ clientId: process.env.PAYPAL_CLIENT_ID })
+);
+
 app.use(notFound);
 app.use(errorHandler);
 
