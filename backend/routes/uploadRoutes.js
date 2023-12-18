@@ -3,6 +3,7 @@ import express from "express";
 import multer from "multer";
 const router = express.Router();
 import cloudinary from "../utils/cloudinary.js";
+import fs from "fs";
 
 const storageMulter = multer.diskStorage({
   destination(req, file, cb) {
@@ -44,14 +45,6 @@ router.post("/", upload.single("image"), (req, res) => {
   // cloudinary.uploader.upload(`${req.file.path}`, function (err, result) {
   //   console.log(req.file.path, result, "from inside");
   //   if (err) {
-  //     //   res.status(500);
-  //     //   throw new Error("Something went wrong with uploading image");
-  //     // }
-  //     // res.status(200).json({
-  //     //   success: true,
-  //     //   message: "Uploaded!",
-  //     //   data: result,
-  //     // });
   //     res.status(500).json({
   //       success: false,
   //       message: "Something went wrong with uploading image",
@@ -65,6 +58,27 @@ router.post("/", upload.single("image"), (req, res) => {
   //     });
   //   }
   // });
+
+  // write a function to delete the image from the uploads folder
+});
+router.delete("/:imageName", (req, res) => {
+  const imageName = req.params.imageName;
+  const imagePath = `uploads/${imageName}`;
+
+  fs.unlink(imagePath, (err) => {
+    if (err) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to delete image",
+        error: err.message,
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        message: "Image deleted successfully",
+      });
+    }
+  });
 });
 
 export default router;
