@@ -6,6 +6,8 @@ import Loader from "../../components/Loader";
 import {
   useGetProductsQuery,
   useCreateProductMutation,
+  useDeleteProductMutation,
+  useRemoveProductImageMutation,
 } from "../../slices/productApiSlice";
 import { toast } from "react-toastify";
 
@@ -17,10 +19,31 @@ const ProductListScreen = () => {
     refetch,
   } = useGetProductsQuery();
 
+  const [deleteProduct, { isloading: loadingDeletion, error: errorDeleting }] =
+    useDeleteProductMutation();
+
+  const [removeProduct] = useRemoveProductImageMutation();
+
   const [createProduct, { isLaoding: loadingCreate }] =
     useCreateProductMutation();
 
-  const deleteHandler = () => {};
+  const deleteHandler = async (product) => {
+    const pathArray = product.image.split("/");
+
+    const imageName = encodeURIComponent(pathArray[pathArray.length - 1]);
+
+    if (window.confirm("Deleteing product?")) {
+      try {
+        // const resImage = await removeProduct(imageName).unwrap();
+        await deleteProduct(product._id).unwrap();
+
+        refetch();
+        toast.success("Product removed");
+      } catch (err) {
+        toast.error(err?.data?.message || err?.error);
+      }
+    }
+  };
 
   const createHandler = async () => {
     if (window.confirm("Create new product?")) {
@@ -67,6 +90,7 @@ const ProductListScreen = () => {
             </thead>
 
             <tbody>
+              {loadingDeletion && <Loader />}
               {products?.map((product) => (
                 <tr key={product._id}>
                   <td>{product._id}</td>
@@ -84,7 +108,7 @@ const ProductListScreen = () => {
                     <Button
                       variant="danger"
                       className="btn-sm"
-                      onClick={() => deleteHandler(product._id)}
+                      onClick={() => deleteHandler(product)}
                     >
                       <FaTrash style={{ color: "white" }} />
                     </Button>
