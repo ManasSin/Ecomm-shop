@@ -5,6 +5,7 @@ import {
   createProduct,
   UpdateProduct,
   DeleteProduct,
+  createProductReview,
 } from "../controllers/productController.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 
@@ -16,5 +17,6 @@ router
   .get(getProductById)
   .put(protect, admin, UpdateProduct)
   .delete(protect, admin, DeleteProduct);
+router.route("/:id/review").post(protect, createProductReview);
 
 export default router;
