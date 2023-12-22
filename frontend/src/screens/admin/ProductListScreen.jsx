@@ -1,3 +1,4 @@
+import { useParams } from "react-router-dom";
 import { LinkContainer } from "react-router-bootstrap";
 import { Table, Button, Row, Col } from "react-bootstrap";
 import { FaEdit, FaTrash } from "react-icons/fa";
@@ -10,16 +11,19 @@ import {
   useRemoveProductImageMutation,
 } from "../../slices/productApiSlice";
 import { toast } from "react-toastify";
+import Paginate from "../../components/Pagination";
 
 const ProductListScreen = () => {
+  const { pageNumber } = useParams();
+
   const {
-    data: products,
+    data,
     isLaoding: productsLoading,
     error,
     refetch,
-  } = useGetProductsQuery();
+  } = useGetProductsQuery({ pageNumber });
 
-  const [deleteProduct, { isloading: loadingDeletion, error: errorDeleting }] =
+  const [deleteProduct, { isloading: loadingDeletion }] =
     useDeleteProductMutation();
 
   const [removeProduct] = useRemoveProductImageMutation();
@@ -91,7 +95,7 @@ const ProductListScreen = () => {
 
             <tbody>
               {loadingDeletion && <Loader />}
-              {products?.map((product) => (
+              {data?.products?.map((product) => (
                 <tr key={product._id}>
                   <td>{product._id}</td>
                   <td>{product.name}</td>
@@ -117,6 +121,7 @@ const ProductListScreen = () => {
               ))}
             </tbody>
           </Table>
+          <Paginate pages={data?.pages} page={data?.page} isAdmin={true} />
         </>
       )}
     </>
