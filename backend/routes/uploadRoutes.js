@@ -5,7 +5,7 @@ const router = express.Router();
 import cloudinary from "../utils/cloudinary.js";
 import fs from "fs";
 
-const storageMulter = multer.diskStorage({
+const storage = multer.diskStorage({
   destination(req, file, cb) {
     cb(null, "uploads/");
   },
@@ -32,35 +32,24 @@ function fileFilter(req, file, cb) {
 }
 
 const upload = multer({
-  storage: storageMulter,
+  storage,
   fileFilter,
 });
+const uploadSingleImage = upload.single("image");
 
-router.post("/", upload.single("image"), (req, res) => {
-  console.log(req.file, "from outside");
-  res.send({
-    message: "Image Uploaded",
-    image: `/${req.file.path}`,
+router.post("/", (req, res) => {
+  uploadSingleImage(req, res, function (err) {
+    if (err) {
+      return res.status(400).send({ message: err.message });
+    }
+
+    res.status(200).send({
+      message: "Image uploaded successfully",
+      image: `/${req.file.path}`,
+    });
   });
-  // cloudinary.uploader.upload(`${req.file.path}`, function (err, result) {
-  //   console.log(req.file.path, result, "from inside");
-  //   if (err) {
-  //     res.status(500).json({
-  //       success: false,
-  //       message: "Something went wrong with uploading image",
-  //       error: err.message,
-  //     });
-  //   } else {
-  //     res.status(200).json({
-  //       success: true,
-  //       message: "Uploaded!",
-  //       data: result,
-  //     });
-  //   }
-  // });
-
-  // write a function to delete the image from the uploads folder
 });
+
 router.delete("/:imageName", (req, res) => {
   const imageName = req.params.imageName;
   const imagePath = `uploads/${imageName}`;
